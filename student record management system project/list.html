@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Record Management — Records</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <div class="logo">SR</div>
+      <div>
+        <h1>Student Records</h1>
+        <p class="muted">View, edit, delete, sort and export/import CSV.</p>
+      </div>
+    </div>
+    <nav>
+      <a class="nav-btn" href="index.html">Add Student</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card list-card">
+      <div class="list-controls">
+        <div class="left">
+          <input id="q" placeholder="Search name or roll" />
+          <button class="btn" id="sortMarksBtn">Sort Marks</button>
+          <button class="btn" id="sortRollBtn">Sort Roll</button>
+          <button class="btn danger" id="clearAllBtn">Clear All</button>
+        </div>
+        <div class="right">
+          <input id="csvFile" type="file" accept=".csv" style="display:none;" />
+          <button class="btn" id="importCsvBtn">Import CSV</button>
+          <button class="btn" id="exportCsvBtn">Export CSV</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="studentTable" class="styled-table">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Roll</th><th>Grade</th><th>Marks</th><th>Actions</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div id="empty" class="empty muted">No records yet — add the first student.</div>
+      </div>
+
+      <p id="studentCount" class="muted small">Total Students: 0</p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    // after loading script, render table
+    loadFromLocalStorage();
+    renderTable();
+
+    // helper used by script
+    function goEditByRoll(roll) {
+      sessionStorage.setItem('sr_edit_roll', roll);
+      location.href = 'index.html';
+    }
+
+    // wire import/export buttons
+    document.getElementById('importCsvBtn').addEventListener('click', () => document.getElementById('csvFile').click());
+    document.getElementById('csvFile').addEventListener('change', e => {
+      const f = e.target.files[0];
+      if (f) importCSVFile(f);
+      e.target.value = '';
+    });
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
+
+    // controls
+    document.getElementById('q').addEventListener('input', renderTable);
+    document.getElementById('sortMarksBtn').addEventListener('click', sortByMarks);
+    document.getElementById('sortRollBtn').addEventListener('click', sortByRoll);
+    document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+  </script>
+</body>
+</html>

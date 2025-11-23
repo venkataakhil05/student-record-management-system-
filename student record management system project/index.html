@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Record Management — Add</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <div class="logo">SR</div>
+      <div>
+        <h1>Student Record Management</h1>
+        <p class="muted">Add or update a student — records persist locally.</p>
+      </div>
+    </div>
+    <nav>
+      <a class="nav-btn" href="list.html">View Records</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card form-card">
+      <h2 id="formTitle">Add / Update Student</h2>
+
+      <form id="studentForm" onsubmit="onSubmit(event)">
+        <div class="form-grid">
+          <label>
+            Name
+            <input type="text" id="name" placeholder="Full name" required />
+          </label>
+
+          <label>
+            Roll Number
+            <input type="text" id="roll" placeholder="Roll (unique)" required />
+          </label>
+
+          <label>
+            Grade
+            <select id="grade">
+              <option>A</option><option>B</option><option>C</option><option>D</option>
+            </select>
+          </label>
+
+          <label>
+            Marks
+            <input type="number" id="marks" placeholder="0 - 100" min="0" max="100" required />
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn primary" id="saveBtn" type="submit">Save Student</button>
+          <button class="btn ghost" type="button" id="resetBtn">Reset</button>
+          <a class="btn link" href="list.html">Go to Records</a>
+        </div>
+
+        <p class="hint muted">Tip: Records are saved in browser localStorage. Edit a record by clicking Edit on Records page.</p>
+      </form>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    // If user clicked Edit on list page we store sr_edit_roll in sessionStorage.
+    // This block loads the record into the form when index.html opens.
+    (function () {
+      const editRoll = sessionStorage.getItem('sr_edit_roll');
+      if (!editRoll) return;
+      loadFromLocalStorage();
+      const arr = studentList.toArray();
+      const idx = arr.findIndex(s => s.roll === editRoll);
+      if (idx >= 0) {
+        const s = arr[idx];
+        document.getElementById('name').value = s.name;
+        document.getElementById('roll').value = s.roll;
+        document.getElementById('grade').value = s.grade;
+        document.getElementById('marks').value = s.marks;
+        // set edit index (script uses editIndex)
+        editIndex = idx;
+        document.getElementById('formTitle').innerText = 'Edit Student';
+        document.getElementById('saveBtn').innerText = 'Update';
+      }
+    })();
+
+    function onSubmit(e) {
+      e.preventDefault();
+      saveStudent(); // implemented in script.js
+    }
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      document.getElementById('studentForm').reset();
+      editIndex = null;
+      sessionStorage.removeItem('sr_edit_roll');
+      document.getElementById('formTitle').innerText = 'Add / Update Student';
+      document.getElementById('saveBtn').innerText = 'Save Student';
+    });
+  </script>
+</body>
+</html>
